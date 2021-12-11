@@ -5,16 +5,18 @@ import './App.css';
 
 
 function App() {
-  const [coordinates, setCoordinates] = useState({ lat: 51.505, lng: -0.09 });
+  const [coordinates, setCoordinates] = useState(null);
+  const [locationName, setLocationName] = useState(null);
 
-  const getMapCoordinates = (coordinates) => {
-    setCoordinates(coordinates)
+  const onChangeLocation = (label, lat, long) => {
+    setCoordinates({ lat: lat, lng: long });
+    setLocationName(label);
   }
 
   return (
     <div>
-      <CurrentWeather getMapCoordinates={getMapCoordinates} />
-      <Map coordinates={coordinates} />
+      <CurrentWeather locationName={locationName} coordinates={coordinates} />
+      <Map handleChangeLocation={onChangeLocation} />
     </div>
   );
 }
