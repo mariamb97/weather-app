@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import CurrentWeather from "./components/CurrentWeather.js"
 import Map from "./components/Map.js"
 import './App.css';
+import SearchField from "./components/SearchField.js";
 
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
 
   return (
     <div>
+      <SearchField />
       <CurrentWeather locationName={locationName} coordinates={coordinates} />
       <Map handleChangeLocation={onChangeLocation} />
     </div>
