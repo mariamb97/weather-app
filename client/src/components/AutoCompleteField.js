@@ -3,13 +3,13 @@ import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import UseDebounce from "../hooks/useDebounce";
 import "./AutoCompleteField.css"
 
-const AutoCompleteField = ({ }) => {
+const AutoCompleteField = ({ handleChangeLocation }) => {
     const [filteredSuggestions, setFilteredSuggestions] = useState([]);
     const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(0);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [positionInput, setPositionInput] = useState("");
 
-    const debouncedInput = UseDebounce(positionInput, 600)
+    const debouncedInput = UseDebounce(positionInput, 500)
 
     useEffect(() => {
         getSuggestions()
@@ -93,15 +93,27 @@ const AutoCompleteField = ({ }) => {
         );
     };
 
+    const handleSubmitLocationForm = async (event) => {
+        const { x, y, label } = filteredSuggestions[0]
+        event.preventDefault();
+        handleChangeLocation(label, y, x);
+
+    };
+
     return (
         <div>
-            <input
-                type="text"
-                onChange={onChange}
-                // onKeyDown={onKeyDown}
-                value={positionInput}
-            />
-            {showSuggestions && positionInput && <SuggestionsListComponent />}
+            <h1>Select a position:</h1>
+            <form onSubmit={handleSubmitLocationForm}>
+                <input
+                    type="text"
+                    onChange={onChange}
+                    // onKeyDown={onKeyDown}
+                    value={positionInput}
+                />
+                {showSuggestions && positionInput && <SuggestionsListComponent />}
+                <button>Get weather</button>
+            </form>
+
         </div>
     );
 };

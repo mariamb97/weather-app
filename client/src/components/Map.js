@@ -1,55 +1,68 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { GeoSearchControl, MapBoxProvider } from 'leaflet-geosearch';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
-import MapSearchField from "./MapSearchField";
+import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import './Map.css';
 
 
 
-export default function Map({ handleChangeLocation }) {
-    // const [draggable, setDraggable] = useState(false)
-    // const markerRef = useRef(null)
-    // const eventHandlers = useMemo(
-    //     () => ({
-    //         dragend() {
-    //             const marker = markerRef.current
-    //             if (marker != null) {
-    //                 setPosition(marker.getLatLng())
-    //             }
-    //         },
-    //     }),
-    //     [],
-    // )
-    // const toggleDraggable = useCallback(() => {
-    //     setDraggable((d) => !d)
-    // }, [])
+export default function Map({ coordinates, handleChangeLocation }) {
+    const [position, setPosition] = useState({})
+    const [draggable, setDraggable] = useState(false)
+    const markerRef = useRef(null)
+    const eventHandlers = useMemo(
+        () => ({
+            dragend() {
+                const marker = markerRef.current
+                if (marker != null) {
+                    setPosition(marker.getLatLng())
+                }
+            },
+        }),
+        [],
+    )
+    const toggleDraggable = useCallback(() => {
+        setDraggable((d) => !d)
+    }, [])
 
-    // useEffect(() => {
-    // setPosition(coordinates)
-    // }, [coordinates])
+    useEffect(() => {
+        getSuggestions()
+    }, [position])
 
-    const DefaultFocusCoordinates = { lat: 0, lng: 0 };
+    const defaultFocusCoordinates = { lat: 0, lng: 0 };
+
+
+    const getSuggestions = async () => {
+        const provider = new OpenStreetMapProvider();
+        let results = []
+        if (position) {
+            results = await provider.search({ query: position });
+            console.log(results)
+        }
+    }
+
     return (
         <div>
-            <MapContainer center={DefaultFocusCoordinates} zoom={2} scrollWheelZoom={false}>
-                <MapSearchField handleChangeLocation={handleChangeLocation} />
+            <MapContainer center={defaultFocusCoordinates} zoom={2} scrollWheelZoom={false}>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                {/* <Marker
-                    draggable={draggable}
-                    eventHandlers={eventHandlers}
-                    position={position}
-                    ref={markerRef}>
-                    <Popup minWidth={90}>
-                        <span onClick={toggleDraggable}>
-                            {draggable
-                                ? 'Marker is draggable'
-                                : 'Click here to make marker draggable'}
-                        </span>
-                    </Popup>
-                </Marker> */}
+                {coordinates &&
+                    <Marker
+                        draggable={draggable}
+                        eventHandlers={eventHandlers}
+                        position={coordinates}
+                        ref={markerRef}
+                    >
+                        <Popup minWidth={90}>
+                            <span onClick={toggleDraggable}>
+                                {draggable
+                                    ? 'Marker is draggable'
+                                    : 'Click here to make marker draggable'}
+                            </span>
+                        </Popup>
+                    </Marker>
+                }
             </MapContainer>
         </div>
     )
