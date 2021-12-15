@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
+import { AlgoliaProvider } from 'leaflet-geosearch';
+import { EsriProvider, geocodeAddresses } from 'leaflet-geosearch';
 import UseDebounce from "../hooks/useDebounce";
 import "./AutoCompleteField.css"
+import Geocoder from 'leaflet-control-geocoder';
 
 const AutoCompleteField = ({ handleChangeLocation }) => {
     const [filteredSuggestions, setFilteredSuggestions] = useState([]);
@@ -9,20 +12,32 @@ const AutoCompleteField = ({ handleChangeLocation }) => {
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [positionInput, setPositionInput] = useState("");
 
-    const debouncedInput = UseDebounce(positionInput, 500)
+    const debouncedInput = UseDebounce(positionInput, 1000)
 
     useEffect(() => {
         getSuggestions()
     }, [debouncedInput])
 
 
+    // const getSuggestions = async () => {
+    //     const provider = new EsriProvider();
+    //     let results = []
+    //     if (debouncedInput) {
+    //         results = await provider.search({ query: debouncedInput });
+    //         console.log(results)
+    //         if (results) {
+    //             setFilteredSuggestions(results)
+    //         }
+
+    //     }
+    // }
+
     const getSuggestions = async () => {
-        const provider = new OpenStreetMapProvider();
-        let results = []
-        if (debouncedInput) {
-            results = await provider.search({ query: debouncedInput });
+        const geocoder = Geocoder.nominatim();
+        debouncedInput && geocoder.geocode(debouncedInput, results => {
             setFilteredSuggestions(results)
-        }
+
+        })
     }
 
     const onChange = async (event) => {
@@ -33,7 +48,7 @@ const AutoCompleteField = ({ handleChangeLocation }) => {
     };
 
     const onClick = (event) => {
-        setFilteredSuggestions([]);
+        setFilteredSuggestions(filteredSuggestions[0]);
         setPositionInput(event.target.innerText);
         setActiveSuggestionIndex(0);
         setShowSuggestions(false);
@@ -78,7 +93,7 @@ const AutoCompleteField = ({ handleChangeLocation }) => {
                             onClick={onClick}
                         // className={className}
                         >
-                            {suggestion.label}
+                            {suggestion.name}
                         </li>
                     );
                 })}
@@ -94,10 +109,11 @@ const AutoCompleteField = ({ handleChangeLocation }) => {
     };
 
     const handleSubmitLocationForm = async (event) => {
-        const { x, y, label } = filteredSuggestions[0]
         event.preventDefault();
-        handleChangeLocation(label, y, x);
-
+        if (filteredSuggestions[0]) {
+            const { name, center } = filteredSuggestions[0]
+            handleChangeLocation(name, center.lat, center.lng);
+        }
     };
 
     return (
