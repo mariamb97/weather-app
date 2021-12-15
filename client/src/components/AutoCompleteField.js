@@ -113,6 +113,7 @@ const AutoCompleteField = ({ handleChangeLocation }) => {
         if (filteredSuggestions[0]) {
             const { name, center } = filteredSuggestions[0]
             handleChangeLocation(name, center.lat, center.lng);
+            setPositionInput("")
         }
     };
 
