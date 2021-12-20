@@ -7,12 +7,16 @@ const API_KEY = "a81cd5ab66ea0cd54ae7b0cddeaec0da";
 
 export default function CurrentWeather({ locationName, coordinates, handleChangeLocation }) {
     const [weather, setWeather] = useState(null);
+    const [weatherDescription, setWeatherDescription] = useState("")
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
     useEffect(() => {
         coordinates && getWeather()
     }, [coordinates])
+    useEffect(() => {
+        toUpperCaseWeatherDescription()
+    }, [weather])
 
     const getWeather = () => {
         setLoading(true);
@@ -61,6 +65,15 @@ export default function CurrentWeather({ locationName, coordinates, handleChange
         humanCalculationYear = dateCalculationTimeArray[3]
     }
 
+
+    const toUpperCaseWeatherDescription = () => {
+        if (weather) {
+            let description = weather.weather[0].description
+            description = description.charAt(0).toUpperCase() + description.slice(1)
+            setWeatherDescription(description)
+        }
+    }
+
     return (
         <div className="weather-container">
             {loading && <div>Data are loading ...</div>}
@@ -68,21 +81,21 @@ export default function CurrentWeather({ locationName, coordinates, handleChange
                 <div>
                     <div id="main-current-weather-container">
                         <div id="main-current-weather-content">
+                            <div id="weather-main-temperature"> {Math.round(weather.main.temp)} °C</div>
                             <div id="weather-main-info">
                                 <h2>{`Current weather in ${locationName}`}</h2>
                                 {weather.dt && <div id="calculation-date">As of {`${humanCalculationWeekDay} ${humanCalculationDay} ${humanCalculationMonth} ${humanCalculationYear} ${humanCalculationTime}`}</div>}
-                                <div id="weather-main-temperature"> {Math.round(weather.main.temp)} °C</div>
                             </div>
                             <div id="weather-main-icon">
                                 <img src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} alt="weather icon" id="weather-icon" />
-                                <div id="weather-main"> {weather.weather[0].main}</div>
+                                <div id="weather-description"> {weatherDescription}</div>
                             </div>
                         </div>
                     </div>
                     <Map coordinates={coordinates} locationName={locationName} handleChangeLocation={handleChangeLocation} />
                     <div>
                         <div>Feels like: {weather.main.feels_like} °C</div>
-                        <div>More details: {weather.weather[0].description}</div>
+                        <div>More details: {weather.weather[0].main}</div>
                         <div>Humidity: {weather.main.humidity + " "}%</div>
                         <div>Cloudiness: {weather.clouds.all + " "}%</div>
                         <div>Visibility: {(weather.visibility / 1000).toFixed(2) + " "} km</div>

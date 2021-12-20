@@ -36,7 +36,6 @@ function App() {
       <NavBar handleChangeLocation={handleChangeLocationForm} />
       <div id="current-weather-container">
         <CurrentWeather locationName={locationName} coordinates={coordinates} handleChangeLocation={handleChangeLocationMarker} />
-
       </div>
     </div>
   );

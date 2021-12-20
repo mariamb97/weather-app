@@ -1,40 +1,53 @@
+#weather-container {
+}
+
 #main-current-weather-container {
   background-color: rgb(245, 255, 245);
   border-radius: 20px;
   font-family: Roboto;
-  max-width: 70%;
+  max-width: 64%;
   margin: auto;
-  margin-top: 40px;
-  padding: 0.5% 2%;
+  margin-top: 30px;
+  padding: 0% 0.5%;
 }
 #main-current-weather-content {
-  max-width: 39%;
+  max-width: 38%;
+  height: 13%;
   padding: 10px;
   display: flex;
-  /* flex-direction: row; */
 }
 h2 {
-  font-size: 110%;
+  font-size: 160%;
   margin-bottom: 5px;
 }
 #calculation-date {
-  font-size: 95%;
+  font-size: 100%;
 }
 #weather-main-temperature {
-  font-size: 300%;
-  margin: 5%;
-}
-#weather-main-info {
-  flex-basis: 145%;
-  /* flex-grow: 0; */
+  font-size: 370%;
+  margin: 14% 8%;
+  flex-basis: 50%;
   flex-shrink: 0;
 }
-#weather-main-icon {
-  margin-left: 55px;
+#weather-main-info {
+  margin: 10% 22%;
+  margin-right: 0%;
+  flex-basis: 106%;
+  flex-shrink: 0;
+  /* flex-grow: 0; */
 }
-#weather-main {
-  margin-left: 28px;
-  margin-top: -20px;
+#weather-main-icon {
+  /* margin-left: 55px; */
+  flex-basis: 27%;
+  flex-shrink: 0;
+  margin-top: -5%;
+}
+#weather-description {
+  width: 200%;
+  margin-left: 46%;
+  margin-top: -35px;
+  font-size: 130%;
 }
 #weather-icon {
+  width: 175%;
 }

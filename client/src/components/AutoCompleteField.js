@@ -1,22 +1,29 @@
 import { useState, useEffect } from "react";
-import { OpenStreetMapProvider } from 'leaflet-geosearch';
-import { AlgoliaProvider } from 'leaflet-geosearch';
-import { EsriProvider } from 'leaflet-geosearch';
+// import { OpenStreetMapProvider } from 'leaflet-geosearch';
+// import { AlgoliaProvider } from 'leaflet-geosearch';
+// import { EsriProvider } from 'leaflet-geosearch';
 import UseDebounce from "../hooks/useDebounce";
+import Geocoder from 'leaflet-control-geocoder'
 import "./AutoCompleteField.css"
-import Geocoder from 'leaflet-control-geocoder';
+    ;
 
 const AutoCompleteField = ({ handleChangeLocation }) => {
     const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-    const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(0);
+    // const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(0);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [positionInput, setPositionInput] = useState("");
+    const [suggestionsNames, setSuggestionsNames] = useState([])
+    const [uniqueSuggestionsNames, setUniqueSuggestionsNames] = useState([])
+
 
     const debouncedInput = UseDebounce(positionInput, 1000)
 
-    useEffect(() => {
+    useEffect(async () => {
         getSuggestions()
     }, [debouncedInput])
+    useEffect(async () => {
+        suggestionsNames && getUniqueSuggestionsNames()
+    }, [suggestionsNames])
 
 
     // const getSuggestions = async () => {
@@ -34,20 +41,34 @@ const AutoCompleteField = ({ handleChangeLocation }) => {
 
     const getSuggestions = async () => {
         const geocoder = Geocoder.nominatim();
-        debouncedInput && geocoder.geocode(debouncedInput, results => {
+        await debouncedInput && geocoder.geocode(debouncedInput, results => {
             setFilteredSuggestions(results)
-
+            getSuggestionsNames(results)
         })
+
+    }
+    const getSuggestionsNames = async (filteredSuggestions) => {
+        setSuggestionsNames([])
+        await filteredSuggestions && filteredSuggestions.map((suggestion) => {
+            const { name } = suggestion
+            const suggestionName = name.split(",").filter((value, index, self) => { return self.indexOf(value) === index && !Number(value) }).join(",")
+            setSuggestionsNames((suggestionsNames) => [...suggestionsNames, suggestionName])
+        })
+    }
+    const getUniqueSuggestionsNames = () => {
+        const uniqueSuggestionsNames = suggestionsNames.filter((value, index, self) => { return self.indexOf(value) === index && !Number(value) })
+        setUniqueSuggestionsNames(uniqueSuggestionsNames)
     }
 
     const onChange = async (event) => {
         setPositionInput(event.target.value);
         setShowSuggestions(true);
-        setActiveSuggestionIndex(0);
+        // setActiveSuggestionIndex(0);
 
     };
 
     const onClick = (event, index) => {
+        console.log(index)
         handleSubmitLocationForm(event, index)
         setFilteredSuggestions(filteredSuggestions[index]);
         setShowSuggestions(false);
@@ -58,10 +79,7 @@ const AutoCompleteField = ({ handleChangeLocation }) => {
     const handleSubmitLocationForm = async (event, index) => {
         event.preventDefault();
         if (filteredSuggestions[index]) {
-            const { city, town, village, locality, county, state, state_district, country } = filteredSuggestions[index].properties.address
-            const address = [city, town, village, locality, county, state_district, state, country]
-            const name = address.filter((element) => element !== undefined).filter((value, index, self) => { return self.indexOf(value) === index; }).join(", ")
-            const { center } = filteredSuggestions[index]
+            const { center, name } = filteredSuggestions[index]
             handleChangeLocation(name, center.lat, center.lng);
             setPositionInput("")
         }
@@ -92,18 +110,14 @@ const AutoCompleteField = ({ handleChangeLocation }) => {
     // };
 
     const SuggestionsListComponent = () => {
-        return filteredSuggestions.length ? (
+        return uniqueSuggestionsNames.length ? (
             <div id="suggestions-container">
                 <ul className="suggestions">
-                    {filteredSuggestions.map((suggestion, index) => {
-                        const { city, town, village, locality, county, state, state_district, country } = suggestion.properties.address
-                        const address = [city, town, village, locality, county, state_district, state, country]
-                        const name = address.filter((element) => element !== undefined).filter((value, index, self) => { return self.indexOf(value) === index; }).join(", ")
-                        {/* let className;
-                    // Flag the active suggestion with a class
-                    if (index === activeSuggestionIndex) {
-                        className = "suggestion-active";
-                    } */}
+                    {uniqueSuggestionsNames.map((suggestionName, index) => {
+                        // let className;
+                        // Flag the active suggestion with a class
+                        // if(index === activeSuggestionIndex) {
+                        //   className = "suggestion-active" }
                         return (
                             <li
                                 key={index}
@@ -111,7 +125,7 @@ const AutoCompleteField = ({ handleChangeLocation }) => {
                                 className="suggestion-elements"
                             // className={className}
                             >
-                                {name}
+                                {suggestionName}
                             </li>
                         );
                     })}
