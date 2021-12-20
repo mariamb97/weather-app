@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { Routes, Route } from "react-router-dom";
+import NavBar from "./components/NavBar.js"
 import CurrentWeather from "./components/CurrentWeather.js"
-import Map from "./components/Map.js"
-import AutoCompleteField from "./components/AutoCompleteField.js";
 import './App.css';
 
 
@@ -10,6 +10,7 @@ function App() {
   const [coordinatesMarker, setCoordinatesMarker] = useState(null);
   const [coordinates, setCoordinates] = useState(null);
   const [locationName, setLocationName] = useState(null);
+
 
   useEffect(() => {
     if (coordinatesForm) {
@@ -32,9 +33,11 @@ function App() {
 
   return (
     <div>
-      <AutoCompleteField handleChangeLocation={handleChangeLocationForm} />
-      <CurrentWeather locationName={locationName} coordinates={coordinates} />
-      <Map coordinates={coordinates} locationName={locationName} handleChangeLocation={handleChangeLocationMarker} />
+      <NavBar handleChangeLocation={handleChangeLocationForm} />
+      <div id="current-weather-container">
+        <CurrentWeather locationName={locationName} coordinates={coordinates} handleChangeLocation={handleChangeLocationMarker} />
+
+      </div>
     </div>
   );
 }

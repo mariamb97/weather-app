@@ -1,7 +1,11 @@
+import { Outlet } from "react-router-dom";
 import React, { useState, useEffect } from 'react'
+import Map from "./Map.js"
+import "./CurrentWeather.css"
 const API_KEY = "a81cd5ab66ea0cd54ae7b0cddeaec0da";
 
-export default function CurrentWeather({ locationName, coordinates }) {
+
+export default function CurrentWeather({ locationName, coordinates, handleChangeLocation }) {
     const [weather, setWeather] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -27,34 +31,86 @@ export default function CurrentWeather({ locationName, coordinates }) {
             .finally(() => setLoading(false));
     };
 
-    // let humanDateSunrise;
-    // if (weather) {
-    //     const sunrise = weather.sys.sunrise;
-    //     const milliseconds = sunrise * 1000;
-    //     const dateSunrise = new Date(milliseconds);
-    //     humanDateSunrise = dateSunrise.toString();
-    // }
+    let humanSunriseTime;
+    let humanSunsetTime
+
+    let humanCalculationWeekDay
+    let humanCalculationDay
+    let humanCalculationMonth
+    let humanCalculationYear
+    let humanCalculationTime
+
+    if (weather) {
+        const { sys, dt, timezone } = weather
+
+        const dateSunriseArray = new Date((sys.sunrise + timezone - 3600) * 1000).toString().split(" ");
+        const dateSunsetArray = new Date((sys.sunset + timezone - 3600) * 1000).toString().split(" ");;
+        const dateCalculationTimeArray = new Date((dt + timezone - 3600) * 1000).toString().split(" ");
+
+        const sunriseTime = dateSunriseArray[4]
+        const sunsetTime = dateSunsetArray[4]
+        const calculationTime = dateCalculationTimeArray[4]
+
+
+        humanSunriseTime = sunriseTime.substring(0, 5)
+        humanSunsetTime = sunsetTime.substring(0, 5)
+        humanCalculationTime = calculationTime.substring(0, 5)
+        humanCalculationWeekDay = dateCalculationTimeArray[0]
+        humanCalculationDay = dateCalculationTimeArray[2]
+        humanCalculationMonth = dateCalculationTimeArray[1]
+        humanCalculationYear = dateCalculationTimeArray[3]
+    }
 
     return (
-        <div>
-            <h2>{locationName}</h2>
+        <div className="weather-container">
             {loading && <div>Data are loading ...</div>}
-
             {weather &&
                 <div>
-                    <div>Today's weather: {weather.weather[0].main}</div>
-                    <div>More details: {weather.weather[0].description}</div>
-                    <img src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} />
-                    <div>
-                        <div> Today's temperature: {weather.main.temp} °C</div>
-                        <div>Perception: {weather.main.feels_like} °C</div>
-                        <div>Max: {weather.main.temp_max} °C</div>
-                        <div>Min: {weather.main.temp_min} °C</div>
+                    <div id="main-current-weather-container">
+                        <div id="main-current-weather-content">
+                            <div id="weather-main-info">
+                                <h2>{`Current weather in ${locationName}`}</h2>
+                                {weather.dt && <div id="calculation-date">As of {`${humanCalculationWeekDay} ${humanCalculationDay} ${humanCalculationMonth} ${humanCalculationYear} ${humanCalculationTime}`}</div>}
+                                <div id="weather-main-temperature"> {Math.round(weather.main.temp)} °C</div>
+                            </div>
+                            <div id="weather-main-icon">
+                                <img src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} alt="weather icon" id="weather-icon" />
+                                <div id="weather-main"> {weather.weather[0].main}</div>
+                            </div>
+                        </div>
                     </div>
-                    {/* {weather && <div>Sunrise hour: {humanDateSunrise}</div>} */}
-                    {/* <div>{weather && weather.message}</div> */}
+                    <Map coordinates={coordinates} locationName={locationName} handleChangeLocation={handleChangeLocation} />
+                    <div>
+                        <div>Feels like: {weather.main.feels_like} °C</div>
+                        <div>More details: {weather.weather[0].description}</div>
+                        <div>Humidity: {weather.main.humidity + " "}%</div>
+                        <div>Cloudiness: {weather.clouds.all + " "}%</div>
+                        <div>Visibility: {(weather.visibility / 1000).toFixed(2) + " "} km</div>
+                    </div>
+                    <div>
+                        <div>Wind speed: {Math.round(weather.wind.speed * 3.6) + " "}(km/h)</div>
+                        {weather.wind.gust && <div>Wind gust: {Math.round(weather.wind.gust * 3.6) + " "}(km/h)</div>}
+                        <div>Wind direction: {weather.wind.deg + " "}°</div>
+                    </div>
+                    <div>
+                        <div>Atmospheric pressure on the sea level: {weather.main.sea_level ? (weather.main.sea_level) : weather.main.pressure}{" "}(mb)</div>
+                        {weather.main.grnd_level && <div>Atmospheric pressure on the ground level: {weather.main.grnd_level + " "}(mb)</div>}
+                    </div>
+                    {weather && <div>Sunrise hour: {humanSunriseTime}</div>}
+                    {weather && <div>Sunset hour: {humanSunsetTime}</div>}
                 </div>}
+            <div>
+                {weather && weather.rain && weather.rain["1h"] && <div>Rain volume for the last 1 hour: {weather.rain["1h"] + " "}mm</div>}
+                {weather && weather.rain && weather.rain["3h"] && <div>Rain volume for the last 3 hours: {weather.rain["3h"] + " "}mm</div>}
+            </div>
+            <div>
+                {weather && weather.snow && weather.snow["1h"] && <div>Snow volume for the last 1 hour: {weather.snow["1h"] + " "}mm</div>}
+                {weather && weather.snow && weather.snow["3h"] && <div>Snow volume for the last 3 hours: {weather.snow["3h"] + " "}mm</div>}
+            </div>
+
+
             {error}
+            <Outlet />
         </div>
     )
 }

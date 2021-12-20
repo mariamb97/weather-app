@@ -19,6 +19,7 @@ function MyMarker({ coordinates, locationName, handleChangeLocation }) {
 
     const reverseGeocode = async () => {
         await geocoder.reverse(onClickCoordinates, map.options.crs.scale(map.getZoom()), results => {
+            console.log(results)
             results[0] && handleChangeLocation(results[0].name, onClickCoordinates.lat, onClickCoordinates.lng)
         })
     }

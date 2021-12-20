@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import { AlgoliaProvider } from 'leaflet-geosearch';
-import { EsriProvider, geocodeAddresses } from 'leaflet-geosearch';
+import { EsriProvider } from 'leaflet-geosearch';
 import UseDebounce from "../hooks/useDebounce";
 import "./AutoCompleteField.css"
 import Geocoder from 'leaflet-control-geocoder';
@@ -42,16 +42,29 @@ const AutoCompleteField = ({ handleChangeLocation }) => {
 
     const onChange = async (event) => {
         setPositionInput(event.target.value);
-        setActiveSuggestionIndex(0);
         setShowSuggestions(true);
+        setActiveSuggestionIndex(0);
 
     };
 
-    const onClick = (event) => {
-        setFilteredSuggestions(filteredSuggestions[0]);
-        setPositionInput(event.target.innerText);
-        setActiveSuggestionIndex(0);
+    const onClick = (event, index) => {
+        handleSubmitLocationForm(event, index)
+        setFilteredSuggestions(filteredSuggestions[index]);
         setShowSuggestions(false);
+        // setActiveSuggestionIndex(0);
+    };
+
+
+    const handleSubmitLocationForm = async (event, index) => {
+        event.preventDefault();
+        if (filteredSuggestions[index]) {
+            const { city, town, village, locality, county, state, state_district, country } = filteredSuggestions[index].properties.address
+            const address = [city, town, village, locality, county, state_district, state, country]
+            const name = address.filter((element) => element !== undefined).filter((value, index, self) => { return self.indexOf(value) === index; }).join(", ")
+            const { center } = filteredSuggestions[index]
+            handleChangeLocation(name, center.lat, center.lng);
+            setPositionInput("")
+        }
     };
 
     // const onKeyDown = (e) => {
@@ -80,24 +93,30 @@ const AutoCompleteField = ({ handleChangeLocation }) => {
 
     const SuggestionsListComponent = () => {
         return filteredSuggestions.length ? (
-            <ul className="suggestions">
-                {filteredSuggestions.map((suggestion, index) => {
-                    {/* let className;
+            <div id="suggestions-container">
+                <ul className="suggestions">
+                    {filteredSuggestions.map((suggestion, index) => {
+                        const { city, town, village, locality, county, state, state_district, country } = suggestion.properties.address
+                        const address = [city, town, village, locality, county, state_district, state, country]
+                        const name = address.filter((element) => element !== undefined).filter((value, index, self) => { return self.indexOf(value) === index; }).join(", ")
+                        {/* let className;
                     // Flag the active suggestion with a class
                     if (index === activeSuggestionIndex) {
                         className = "suggestion-active";
                     } */}
-                    return (
-                        <li
-                            key={index}
-                            onClick={onClick}
-                        // className={className}
-                        >
-                            {suggestion.name}
-                        </li>
-                    );
-                })}
-            </ul>
+                        return (
+                            <li
+                                key={index}
+                                onClick={(event) => onClick(event, index)}
+                                className="suggestion-elements"
+                            // className={className}
+                            >
+                                {name}
+                            </li>
+                        );
+                    })}
+                </ul>
+            </div>
         ) : (
             <div className="no-suggestions">
                 <span role="img" aria-label="tear emoji">
@@ -108,27 +127,18 @@ const AutoCompleteField = ({ handleChangeLocation }) => {
         );
     };
 
-    const handleSubmitLocationForm = async (event) => {
-        event.preventDefault();
-        if (filteredSuggestions[0]) {
-            const { name, center } = filteredSuggestions[0]
-            handleChangeLocation(name, center.lat, center.lng);
-            setPositionInput("")
-        }
-    };
 
     return (
-        <div>
-            <h1>Select a position:</h1>
+        <div id="search-input">
             <form onSubmit={handleSubmitLocationForm}>
                 <input
                     type="text"
                     onChange={onChange}
                     // onKeyDown={onKeyDown}
                     value={positionInput}
+                    placeholder="Search by location"
                 />
                 {showSuggestions && positionInput && <SuggestionsListComponent />}
-                <button>Get weather</button>
             </form>
 
         </div>

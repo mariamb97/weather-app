@@ -1,0 +1,40 @@
+#main-current-weather-container {
+  background-color: rgb(245, 255, 245);
+  border-radius: 20px;
+  font-family: Roboto;
+  max-width: 70%;
+  margin: auto;
+  margin-top: 40px;
+  padding: 0.5% 2%;
+}
+#main-current-weather-content {
+  max-width: 39%;
+  padding: 10px;
+  display: flex;
+  /* flex-direction: row; */
+}
+h2 {
+  font-size: 110%;
+  margin-bottom: 5px;
+}
+#calculation-date {
+  font-size: 95%;
+}
+#weather-main-temperature {
+  font-size: 300%;
+  margin: 5%;
+}
+#weather-main-info {
+  flex-basis: 145%;
+  /* flex-grow: 0; */
+  flex-shrink: 0;
+}
+#weather-main-icon {
+  margin-left: 55px;
+}
+#weather-main {
+  margin-left: 28px;
+  margin-top: -20px;
+}
+#weather-icon {
+}
