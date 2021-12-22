@@ -1,5 +1,8 @@
 .leaflet-container {
-  height: 380px;
-  width: 600px;
+  display: block;
+  height: 22.5rem;
+  width: 42.5rem;
   position: inherit;
+  /* margin: auto; */
+  margin: 25px auto;
 }

@@ -1,8 +1,10 @@
 #weather-container {
 }
 
-#main-current-weather-container {
-  background-color: rgb(245, 255, 245);
+.main-current-weather-container {
+  box-shadow: 0 0 30px 0 rgb(0 0 0 / 30%);
+  background-color: hsla(0, 0%, 100%, 0.1);
+  color: rgb(255, 255, 255);
   border-radius: 20px;
   font-family: Roboto;
   max-width: 64%;
@@ -10,44 +12,82 @@
   margin-top: 30px;
   padding: 0% 0.5%;
 }
-#main-current-weather-content {
-  max-width: 38%;
+.main-current-weather-content {
+  max-width: 40%;
   height: 13%;
-  padding: 10px;
   display: flex;
 }
-h2 {
-  font-size: 160%;
-  margin-bottom: 5px;
-}
-#calculation-date {
-  font-size: 100%;
-}
 #weather-main-temperature {
-  font-size: 370%;
-  margin: 14% 8%;
-  flex-basis: 50%;
+  font-size: 310%;
+  margin: 14% 0% 13% 16%;
+  flex-basis: 55%;
   flex-shrink: 0;
 }
-#weather-main-info {
-  margin: 10% 22%;
-  margin-right: 0%;
+
+#weather-main-position {
+  text-align: center;
+  margin: 5% 10% 8% 5%;
   flex-basis: 106%;
   flex-shrink: 0;
   /* flex-grow: 0; */
 }
-#weather-main-icon {
-  /* margin-left: 55px; */
-  flex-basis: 27%;
-  flex-shrink: 0;
-  margin-top: -5%;
+h2 {
+  font-size: 116%;
+  margin-bottom: 5px;
 }
-#weather-description {
-  width: 200%;
-  margin-left: 46%;
-  margin-top: -35px;
-  font-size: 130%;
+#calculation-date {
+  font-size: 95%;
+}
+
+#weather-main-description {
+  margin: 0% 10%;
+  flex-basis: 55%;
+  flex-shrink: 0;
+
+  /* margin-top: 0%; */
 }
 #weather-icon {
-  width: 175%;
+  width: 65%;
+}
+#weather-icon-description {
+  width: 80%;
+  text-align: center;
+  margin-top: -30px;
+  margin-left: -4%;
+  font-size: 110%;
+}
+#current-weather-details {
+  display: flex;
+  margin-bottom: 20px;
+}
+#current-weather-title {
+  font-size: 116%;
+  flex-basis: 72.5%;
+  flex-shrink: 0;
+  margin: 3%;
+}
+#current-weather-feels-like {
+  flex-basis: 17.5%;
+  flex-shrink: 0;
+  text-align: center;
+}
+#current-weather-feels-like-temperature {
+  flex-basis: 20.5%;
+  flex-shrink: 0;
+  font-size: 250%;
+  margin-top: 8%;
+}
+
+.current-weather-characteristics-container {
+  border-top: 2.5px solid rgba(0, 22, 56, 0.4);
+}
+.current-weather-characteristics-content {
+  display: flex;
+  padding: 1%;
+}
+.current-weather-characteristic {
+  flex-basis: 35%;
+  flex-shrink: 0;
+  flex-grow: 0;
+  margin: 0.5%;
 }

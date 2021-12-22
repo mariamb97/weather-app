@@ -32,7 +32,7 @@ function App() {
   }
 
   return (
-    <div>
+    <div id="app">
       <NavBar handleChangeLocation={handleChangeLocationForm} />
       <div id="current-weather-container">
         <CurrentWeather locationName={locationName} coordinates={coordinates} handleChangeLocation={handleChangeLocationMarker} />

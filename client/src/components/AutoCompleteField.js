@@ -8,12 +8,13 @@ import "./AutoCompleteField.css"
     ;
 
 const AutoCompleteField = ({ handleChangeLocation }) => {
-    const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+    const [filteredSuggestions, setFilteredSuggestions] = useState(null);
+    const [filteredUniqueSuggestions, setFilteredUniqueSuggestions] = useState(null)
     // const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(0);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [positionInput, setPositionInput] = useState("");
-    const [suggestionsNames, setSuggestionsNames] = useState([])
-    const [uniqueSuggestionsNames, setUniqueSuggestionsNames] = useState([])
+    // const [suggestionsNames, setSuggestionsNames] = useState([])
+    // const [uniqueSuggestionsNames, setUniqueSuggestionsNames] = useState([])
 
 
     const debouncedInput = UseDebounce(positionInput, 1000)
@@ -21,9 +22,9 @@ const AutoCompleteField = ({ handleChangeLocation }) => {
     useEffect(async () => {
         getSuggestions()
     }, [debouncedInput])
-    useEffect(async () => {
-        suggestionsNames && getUniqueSuggestionsNames()
-    }, [suggestionsNames])
+    useEffect(() => {
+        filteredSuggestions && getFilteredSuggestions()
+    }, [filteredSuggestions])
 
 
     // const getSuggestions = async () => {
@@ -43,21 +44,27 @@ const AutoCompleteField = ({ handleChangeLocation }) => {
         const geocoder = Geocoder.nominatim();
         await debouncedInput && geocoder.geocode(debouncedInput, results => {
             setFilteredSuggestions(results)
-            getSuggestionsNames(results)
         })
+        getFilteredSuggestions()
 
     }
-    const getSuggestionsNames = async (filteredSuggestions) => {
-        setSuggestionsNames([])
-        await filteredSuggestions && filteredSuggestions.map((suggestion) => {
-            const { name } = suggestion
-            const suggestionName = name.split(",").filter((value, index, self) => { return self.indexOf(value) === index && !Number(value) }).join(",")
-            setSuggestionsNames((suggestionsNames) => [...suggestionsNames, suggestionName])
-        })
-    }
-    const getUniqueSuggestionsNames = () => {
-        const uniqueSuggestionsNames = suggestionsNames.filter((value, index, self) => { return self.indexOf(value) === index && !Number(value) })
-        setUniqueSuggestionsNames(uniqueSuggestionsNames)
+
+    const getFilteredSuggestions = async () => {
+        let filteredByNameSuggestions
+        if (filteredSuggestions && filteredSuggestions.length) {
+            setFilteredUniqueSuggestions(filteredSuggestions)
+            filteredByNameSuggestions = await filteredSuggestions.filter((suggestion, index, filteredSuggestions) => {
+                for (const property in suggestion) {
+                    const uniqueIndex = filteredSuggestions.findIndex((element) => element["name"] === suggestion["name"])
+                    if (index === uniqueIndex) {
+                        return index === uniqueIndex
+                    } else {
+                        return false
+                    }
+                }
+            })
+        }
+        setFilteredUniqueSuggestions(filteredByNameSuggestions)
     }
 
     const onChange = async (event) => {
@@ -68,7 +75,6 @@ const AutoCompleteField = ({ handleChangeLocation }) => {
     };
 
     const onClick = (event, index) => {
-        console.log(index)
         handleSubmitLocationForm(event, index)
         setFilteredSuggestions(filteredSuggestions[index]);
         setShowSuggestions(false);
@@ -78,9 +84,13 @@ const AutoCompleteField = ({ handleChangeLocation }) => {
 
     const handleSubmitLocationForm = async (event, index) => {
         event.preventDefault();
-        if (filteredSuggestions[index]) {
-            const { center, name } = filteredSuggestions[index]
-            handleChangeLocation(name, center.lat, center.lng);
+        if (filteredUniqueSuggestions[index]) {
+            const { center, name } = filteredUniqueSuggestions[index]
+            const suggestionName = name.split(",").filter((value, index, self) => {
+                const splitValueArray = value.split("-")
+                return self.indexOf(value) === index && !Number(value) && !Number(splitValueArray[0])
+            }).join(",")
+            handleChangeLocation(suggestionName, center.lat, center.lng);
             setPositionInput("")
         }
     };
@@ -110,10 +120,15 @@ const AutoCompleteField = ({ handleChangeLocation }) => {
     // };
 
     const SuggestionsListComponent = () => {
-        return uniqueSuggestionsNames.length ? (
+        return filteredUniqueSuggestions ? (
             <div id="suggestions-container">
                 <ul className="suggestions">
-                    {uniqueSuggestionsNames.map((suggestionName, index) => {
+                    {filteredUniqueSuggestions.map((suggestion, index) => {
+                        const { name } = suggestion
+                        const suggestionName = name.split(",").filter((value, index, self) => {
+                            const splitValueArray = value.split("-")
+                            return self.indexOf(value) === index && !Number(value) && !Number(splitValueArray[0])
+                        }).join(",")
                         // let className;
                         // Flag the active suggestion with a class
                         // if(index === activeSuggestionIndex) {
