@@ -7,6 +7,7 @@
   color: rgb(255, 255, 255);
   border-radius: 20px;
   font-family: Roboto;
+  letter-spacing: 1.5px;
   max-width: 64%;
   margin: auto;
   margin-top: 30px;
@@ -29,7 +30,6 @@
   margin: 5% 10% 8% 5%;
   flex-basis: 106%;
   flex-shrink: 0;
-  /* flex-grow: 0; */
 }
 h2 {
   font-size: 116%;
@@ -38,13 +38,10 @@ h2 {
 #calculation-date {
   font-size: 95%;
 }
-
 #weather-main-description {
   margin: 0% 10%;
   flex-basis: 55%;
   flex-shrink: 0;
-
-  /* margin-top: 0%; */
 }
 #weather-icon {
   width: 65%;
@@ -61,13 +58,14 @@ h2 {
   margin-bottom: 20px;
 }
 #current-weather-title {
-  font-size: 116%;
-  flex-basis: 72.5%;
+  font-size: 125%;
+  letter-spacing: 2px;
+  flex-basis: 72%;
   flex-shrink: 0;
-  margin: 3%;
+  margin: 4% 0% 0% 5%;
 }
 #current-weather-feels-like {
-  flex-basis: 17.5%;
+  flex-basis: 20%;
   flex-shrink: 0;
   text-align: center;
 }
@@ -75,19 +73,74 @@ h2 {
   flex-basis: 20.5%;
   flex-shrink: 0;
   font-size: 250%;
-  margin-top: 8%;
+  margin-top: 10%;
 }
-
 .current-weather-characteristics-container {
-  border-top: 2.5px solid rgba(0, 22, 56, 0.4);
+  display: flex;
 }
 .current-weather-characteristics-content {
-  display: flex;
-  padding: 1%;
+  margin: auto;
+  flex-basis: 45%;
+  flex-shrink: 0;
+  margin-bottom: 12.5px;
 }
 .current-weather-characteristic {
-  flex-basis: 35%;
+  border-top: 2.5px solid rgba(0, 22, 56, 0.4);
+  padding: 2%;
+}
+.characteristic-box {
+  margin: 2% 0%;
+}
+.characteristic-icon {
+  font-size: 115%;
+  margin: 0% 5%;
+  width: 20px;
+}
+.characteristic-name {
+  margin-right: 32.5%;
+  /* width: 100%; */
+  /* font-size: 105%; */
+}
+.characteristic-value {
+  /* font-size: 105%; */
+}
+.characteristic-title {
+  font-size: 120%;
+  letter-spacing: 2px;
+  flex-basis: 74%;
   flex-shrink: 0;
-  flex-grow: 0;
-  margin: 0.5%;
+  margin: 3% 0% 0% 5%;
+}
+#wind-direction {
+  font-size: 110%;
+  flex-basis: 15%;
+  flex-shrink: 0;
+  margin-top: 3%;
+}
+#wind-direction-title {
+  margin-right: 10px;
+}
+.characteristic-double-icon {
+  font-size: 110%;
+  margin: 0% 5%;
+  width: 40px;
+}
+.wind-gust {
+  display: flex;
+  /* width: 110%; */
+}
+.odd-container {
+  flex-basis: 95%;
+  flex-shrink: 0;
+  padding: 0%;
+  margin-left: 1%;
+  text-align: center;
+}
+.odd-content-name {
+  margin-right: 60px;
+  width: 210px;
+}
+.odd-content {
+  /* margin-left: 180px; */
+  /* margin-left: 20%; */
 }

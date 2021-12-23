@@ -45,6 +45,18 @@ export default function CurrentWeather({ locationName, coordinates, handleChange
     let humanCalculationYear
     let humanCalculationTime
 
+    let windDegrees
+
+    let contentOddClassNameGrndLevel
+    let characteristicOddClassNameGrndLevel
+    let characteristicBoxOddClassNameGrndLevel
+    let characteristicNameOddClassNameGrndLevel
+
+    let contentOddClassNameWindGust
+    let characteristicOddClassNameWindGust
+    let characteristicBoxOddClassNameWindGust
+    let characteristicNameOddClassNameWindGust
+
     if (weather) {
         const { sys, dt, timezone } = weather
 
@@ -68,6 +80,19 @@ export default function CurrentWeather({ locationName, coordinates, handleChange
         humanCalculationDay = dateCalculationTimeArray[2]
         humanCalculationMonth = dateCalculationTimeArray[1]
         humanCalculationYear = dateCalculationTimeArray[3]
+
+        windDegrees = `rotate(${weather.wind.deg + 134}deg)`
+
+        weather.main.grnd_level ? contentOddClassNameGrndLevel = "current-weather-characteristics-content" : contentOddClassNameGrndLevel = "current-weather-characteristics-content odd-container"
+        weather.main.grnd_level ? characteristicOddClassNameGrndLevel = "current-weather-characteristic" : characteristicOddClassNameGrndLevel = "current-weather-characteristic odd-container"
+        weather.main.grnd_level ? characteristicNameOddClassNameGrndLevel = "characteristic-name" : characteristicNameOddClassNameGrndLevel = "characteristic-name odd-content-name"
+        weather.main.grnd_level ? characteristicBoxOddClassNameGrndLevel = "characteristic-box" : characteristicBoxOddClassNameGrndLevel = "characteristic-box odd-content"
+
+        weather.wind.gust ? contentOddClassNameWindGust = "current-weather-characteristics-content" : contentOddClassNameWindGust = "current-weather-characteristics-content odd-container"
+        weather.wind.gust ? characteristicOddClassNameWindGust = "current-weather-characteristic " : characteristicOddClassNameWindGust = "current-weather-characteristic odd-container"
+        weather.wind.gust ? characteristicNameOddClassNameWindGust = "characteristic-name" : characteristicNameOddClassNameWindGust = "characteristic-name odd-content-name"
+        weather.wind.gust ? characteristicBoxOddClassNameWindGust = "characteristic-box " : characteristicBoxOddClassNameWindGust = "characteristic-box odd-content"
+
     }
 
 
@@ -99,82 +124,123 @@ export default function CurrentWeather({ locationName, coordinates, handleChange
                     </div>
                     <Map coordinates={coordinates} locationName={locationName} handleChangeLocation={handleChangeLocation} />
                     <div className="main-current-weather-container">
-                        <div>
-                            <div id="current-weather-details">
-                                <h4 id="current-weather-title">Current weather</h4>
-                                <div id="current-weather-feels-like">
-                                    <div id="current-weather-feels-like-temperature"> {weather.main.feels_like} °C</div>
-                                    <div>Feels Like</div>
+                        <div id="current-weather-details">
+                            <h4 id="current-weather-title">Current weather</h4>
+                            <div id="current-weather-feels-like">
+                                <div id="current-weather-feels-like-temperature"> {weather.main.feels_like} °C</div>
+                                <div>Feels Like</div>
+                            </div>
+                        </div>
+                        <div className="current-weather-characteristics-container">
+                            <div className="current-weather-characteristics-content">
+                                <div className="current-weather-characteristic">
+                                    <div className="characteristic-box">
+                                        <i class="fas fa-tint characteristic-icon"></i>
+                                        <span className="characteristic-name"> Humidity </span>
+                                        <span className="characteristic-value">{weather.main.humidity + " "}%</span>
+                                    </div>
+                                </div>
+                                <div className="current-weather-characteristic">
+                                    <div className="characteristic-box">
+                                        <i class="fas fa-eye characteristic-icon"></i>
+                                        <span className="characteristic-name">Visibility</span>
+                                        <span className="characteristic-value"> {(weather.visibility / 1000).toFixed(2) + " "} km</span>
+                                    </div>
+                                </div>
+                                <div className="current-weather-characteristic">
+                                    <div className="characteristic-box">
+                                        <i class="fas fa-long-arrow-alt-up characteristic-icon"></i>
+                                        <span className="characteristic-name"> Sunrise</span>
+                                        <span className="characteristic-value"> {humanSunriseTime + " (h)"}</span>
+                                    </div>
                                 </div>
                             </div>
+                            <div className="current-weather-characteristics-content">
+                                <div className="current-weather-characteristic">
+                                    <div className="characteristic-box">
+                                        <i class="fas fa-cloud characteristic-icon"></i>
+                                        <span className="characteristic-name">Cloudiness</span>
+                                        <span className="characteristic-value">{weather.clouds.all + " "}%</span>
+                                    </div>
+                                </div>
+                                <div className="current-weather-characteristic">
+                                    <div className="characteristic-box">
+                                        <i class="far fa-sun characteristic-icon"></i>
+                                        <span className="characteristic-name">Daylight </span>
+                                        <span className="characteristic-value"> {humanDayLight + " (h)"}</span>
+                                    </div>
+                                </div>
+                                <div className="current-weather-characteristic">
+                                    <div className="characteristic-box">
+                                        <i class="fas fa-long-arrow-alt-down characteristic-icon"></i>
+                                        <span className="characteristic-name"> Sunset </span>
+                                        <span className="characteristic-value"> {humanSunsetTime + " (h)"}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="main-current-weather-container" >
+                        <div id="current-weather-details">
+                            <h4 className="characteristic-title">Wind</h4>
+                            <div id="wind-direction">
+                                <span id="wind-direction-title" >Direction</span>
+                                {windDegrees && <i class="fas fa-location-arrow characteristic-icon" style={{ transform: windDegrees }} ></i>}
+
+                            </div>
+                        </div>
+                        <div>
                             <div className="current-weather-characteristics-container">
+                                <div className={contentOddClassNameWindGust}>
+                                    <div className={characteristicOddClassNameWindGust}>
+                                        <div className={characteristicBoxOddClassNameWindGust}>
+                                            <i class="fas fa-wind characteristic-icon"></i>
+                                            <span className={characteristicNameOddClassNameWindGust}>Speed</span>
+                                            <span className="characteristic-value">{" " + Math.round(weather.wind.speed * 3.6) + " "}(km/h)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="current-weather-characteristics-content">
+                                    {weather.wind.gust && <div className="current-weather-characteristic">
+                                        <div className="characteristic-box wind-gust">
+                                            <div className="characteristic-double-icon">
+                                                <i class="fas fa-wind"></i>
+                                                <i class="fas fa-wind"></i>
+                                            </div>
+                                            <span className="characteristic-name">Wind gust</span>
+                                            <span className="characteristic-value">{" " + Math.round(weather.wind.gust * 3.6) + " "}(km/h)</span>
+                                        </div>
+                                    </div>}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="main-current-weather-container">
+                        <div id="current-weather-details">
+                            {/* <i class="fas fa-compress-arrows-alt"></i> */}
+                            <h4 className="characteristic-title">Atmospheric pressure</h4>
+                        </div>
+                        <div className="current-weather-characteristics-container">
+                            <div className={contentOddClassNameGrndLevel}>
+                                <div className={characteristicOddClassNameGrndLevel}>
+                                    <div className={characteristicBoxOddClassNameGrndLevel}>
+                                        <i class="fas fa-water characteristic-icon"></i>
+                                        <span className={characteristicNameOddClassNameGrndLevel}>Sea level</span>
+                                        <span className="characteristic-value"> {weather.main.sea_level ? (weather.main.sea_level) : weather.main.pressure}{" "}(mb)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {weather.main.grnd_level &&
                                 <div className="current-weather-characteristics-content">
                                     <div className="current-weather-characteristic">
-                                        <i class="fas fa-tint"></i>
-                                        <span> Humidity </span>
-                                        <span>{weather.main.humidity + " "}%</span>
+                                        <div className="characteristic-box">
+                                            <i class="fas fa-align-justify characteristic-icon"></i>
+                                            <span className="characteristic-name">Ground level</span>
+                                            <span className="characteristic-value"> {weather.main.grnd_level + " "}(mb)</span>
+                                        </div>
                                     </div>
-                                    <div className="current-weather-characteristic">
-                                        <i class="fas fa-cloud"></i>
-                                        <span>Cloudiness</span>
-                                        <span>{weather.clouds.all + " "}%</span>
-                                    </div>
-                                    <div className="current-weather-characteristic">
-                                        <i class="fas fa-eye"></i>
-                                        <span>Visibility</span>
-                                        <span> {(weather.visibility / 1000).toFixed(2) + " "} km</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="current-weather-characteristics-container">
-                            <div className="current-weather-characteristics-content">
-                                <div className="current-weather-characteristic">
-                                    <i class="fas fa-wind"></i>
-                                    <span>Wind speed</span>
-                                    <span>{" " + Math.round(weather.wind.speed * 3.6) + " "}(km/h)</span>
-                                </div>
-                                {weather.wind.gust && <div className="current-weather-characteristic">
-                                    <i class="fas fa-wind"></i>
-                                    <i class="fas fa-wind"></i>
-                                    <span> Wind gust</span>
-                                    <span>{" " + Math.round(weather.wind.gust * 3.6) + " "}(km/h)</span>
                                 </div>}
-                                <div className="current-weather-characteristic">Wind direction: {weather.wind.deg + " "}°</div>
-                            </div>
-                        </div>
 
-                        <div className="current-weather-characteristics-container">
-                            <div className="current-weather-characteristics-content">
-                                <div className="current-weather-characteristic">
-                                    <i class="far fa-sun"></i>
-                                    <span>Daylight {humanDayLight + " (h)"}</span>
-                                </div>
-                                <div className="current-weather-characteristic">
-                                    <i class="fas fa-long-arrow-alt-up"></i>
-                                    <span> Sunrise {humanSunriseTime + " (h)"}</span>
-                                </div>
-                                <div className="current-weather-characteristic">
-                                    <i class="fas fa-long-arrow-alt-down"></i>
-                                    <span> Sunset {humanSunsetTime + " (h)"}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="current-weather-characteristics-container">
-                            <div className="current-weather-characteristics-content">
-                                <div className="current-weather-characteristic">
-                                    <i class="fas fa-compress-alt"></i>
-                                    <span>Atmospheric pressure</span>
-                                </div>
-                                <div className="current-weather-characteristic"> on the sea level:
-                                    <span> {weather.main.sea_level ? (weather.main.sea_level) : weather.main.pressure}{" "}(mb)</span>
-                                </div>
-                                {weather.main.grnd_level &&
-                                    <div className="current-weather-characteristic">on the ground level:
-                                        <span> {weather.main.grnd_level + " "}(mb)</span>
-                                    </div>}
-
-                            </div>
                         </div>
                     </div>
                 </div>}
@@ -190,6 +256,6 @@ export default function CurrentWeather({ locationName, coordinates, handleChange
 
             {error}
             <Outlet />
-        </div>
+        </div >
     )
 }
